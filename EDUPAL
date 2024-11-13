@@ -44,7 +44,7 @@ if __name__ == "__main__":
             print("Thank You for using EDUPAL ! See you soon ! ")
             break
 
-        if choice in ["study resources", "quiz generator", "question bank"]:
+        if choice in ["study resources", "motivation", "question bank"]:
             topic = input("Please specify the topic: ")
             if choice == "question bank":
                 question_type = input("Question type (MCQ, short, or long): ").strip().lower()

@@ -1,0 +1,63 @@
+import google.generativeai as genai
+genai.configure(api_key="AIzaSyDEuo9ATs0-PgzbRWiPzTDbBEcHZcvidJk")
+model = genai.GenerativeModel("gemini-1.5-flash")
+system_prompt = "respond in a informative way and helpful way"
+def chat_with_bot(user_type, choice=None, topic=None, question_type=None):
+    
+    if user_type == "student":
+        if choice == "study resources":
+            prompt = f"{system_prompt} Give an informative description and study references on {topic}."
+        elif choice == "question bank":
+            prompt = f"{system_prompt} Provide 10 {question_type} questions on {topic} with answer key at the end."
+        elif choice == "motivation":
+            prompt = f"{system_prompt} Help the student by giving motivational advices but do not ask questions just motivate to study and include with quotes from famous people."
+        else:
+            prompt = f"{system_prompt} Ask if the user wants 'study resources', 'question bank', or 'motivation'."
+    elif user_type == "teacher":
+        if choice == "lesson concepts":
+            prompt = f"{system_prompt} Describe the concept of {topic} in detail."
+        elif choice == "teaching aids":
+            prompt = f"{system_prompt} Provide key points and teaching tips for {topic}."
+        elif choice == "teach a concept":
+            prompt = f"{system_prompt} Explain {topic} in two ways: for a beginner and an advanced level with examples."
+        else:
+            prompt = f"{system_prompt} Ask if the user wants 'lesson concepts', 'teaching aids', or 'teach a concept'."
+    else:
+        prompt = f"{system_prompt} Ask if the user is a student or teacher and provide related options."
+    response = model.generate_content(prompt)
+    return response.text.replace('*', '').replace('#', '')
+if __name__ == "__main__":
+    print("WELCOME TO EDUPAL. Are you a student or teacher?")
+    user_type = input("You (type 'student' or 'teacher'): ").strip().lower()
+    while user_type not in ["student", "teacher"]:
+        print("Please enter 'student' or 'teacher'.")
+        user_type = input("You: ").strip().lower()
+
+    while True:
+        if user_type == "student":
+            print("Choose an option: Study resources, Question bank, Motivation")
+        elif user_type == "teacher":
+            print("Choose an option: Lesson concepts, Teaching aids, Teach a concept")
+
+        choice = input("You (Type your choice or 'exit' to quit): ").strip().lower()
+        if choice == 'exit':
+            print("Thank You for using EDUPAL ! See you soon ! ")
+            break
+
+        if choice in ["study resources", "quiz generator", "question bank"]:
+            topic = input("Please specify the topic: ")
+            if choice == "question bank":
+                question_type = input("Question type (MCQ, short, or long): ").strip().lower()
+                response = chat_with_bot(user_type, choice, topic, question_type)
+            else:
+                response = chat_with_bot(user_type, choice, topic)
+        elif choice == "motivation":
+            response = chat_with_bot(user_type, choice)
+        elif choice in ["teaching aids", "lesson concepts", "teach a concept"]:
+            topic = input("Please specify the topic: ")
+            response = chat_with_bot(user_type, choice, topic)
+        else:
+            response = chat_with_bot(user_type)
+
+        print(f"EduPal: {response}")
+        
